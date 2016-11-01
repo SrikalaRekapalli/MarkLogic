@@ -21,7 +21,7 @@
         "lbID": "[resourceId('Microsoft.Network/loadBalancers',parameters('loadBalancerName'))]",
         "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/LoadBalancerFrontEnd')]",
         "lbPoolID": "[concat(variables('lbID'),'/backendAddressPools/BackendPool1')]",
-        "lbProbeID": "[concat(variables('lbID'),'/probes/tcpProbe')]",
+        "lbProbeID": "[concat(variables('lbID'),'/probes/tcpProbe')]"
     },
     "resources": [
         {
@@ -29,9 +29,6 @@
             "type": "Microsoft.Network/loadBalancers",
             "name": "[parameters('loadBalancerName')]",
             "location": "[resourceGroup().location]",
-            "dependsOn": [
-               "[concat('Microsoft.Network/publicIPAddresses/', parameters('publicIPAddressName'))]"
-            ],
             "properties": {
                 "frontendIPConfigurations": [
                   {
