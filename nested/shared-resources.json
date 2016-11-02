@@ -30,7 +30,8 @@
             }
         },
         "count": {
-            "type": "int"
+            "type": "int",
+            "defaultValue": 3
         }
     
   },
