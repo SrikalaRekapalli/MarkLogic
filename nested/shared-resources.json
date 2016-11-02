@@ -1,8 +1,8 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-     "location": {
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
             "type": "string",
             "defaultValue": "eastus",
             "metadata": {
@@ -16,6 +16,13 @@
                 "description": "Stoarge Account Type"
             }
         },
+        "dataDiskStorageAccountType": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "metadata": {
+                "description": "Stoarge Account Type"
+            }
+        },
         "storageApiVersion": {
             "type": "string",
             "defaultValue": "2015-06-15",
@@ -23,29 +30,31 @@
                 "description": "API Version for the Storage Account"
             }
         },
-         "storageAccountName": {
+        "storageAccountName": {
             "type": "string",
             "metadata": {
                 "description": "Storage Account Name"
             }
         },
-        "count": {
-            "type": "int",
-            "defaultValue": 3
+        "dataDiskstorageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Storage Account Name"
+            }
         }
-    
-  },
- "variables": {
+    },
+    "variables": {
         "storageAccountName": "[parameters('storageAccountName')]",
+        "dataDiskSAName": "[parameters('dataDiskstorageAccountName')]",
         "storageApiVersion": "[parameters('storageApiVersion')]",
         "storageAccountType": "[parameters('storageAccountType')]",
+        "dataDiskSAType": "[parameters('dataDiskStorageAccountType')]",
         "storageAccName": "[concat(variables('storageAccountName'),uniqueString(resourceGroup().id))]",
         "storageAccountUrl": "https://raw.githubusercontent.com/sysgain/MarkLogic/marklogicDev1/nested/multipleStorageAccounts.json"
-         },
-
-  "resources": [
-    {
-            "name": "storageAccountDeployment",
+    },
+    "resources": [
+        {
+            "name": "osDiskStorageAccountDeployment",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2015-01-01",
             "properties": {
@@ -67,10 +76,34 @@
                     "storageAccountName": {
                         "value": "[variables('storageAccName')]"
                     }
-               
+                }
+            }
+        },
+        {
+            "name": "dataDiskstorageAccountDeploy",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('storageAccountUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "storageApiVersion": {
+                        "value": "[variables('storageApiVersion')]"
+                    },
+                    "storageAccountType": {
+                        "value": "[variables('dataDiskSAType')]"
+                    },
+                    "storageAccountName": {
+                        "value": "[variables('dataDiskSAName')]"
+                    }
                 }
             }
         }
-
-  ]
+    ]
 }
