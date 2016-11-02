@@ -39,6 +39,23 @@
             "metadata": {
                 "description": "Type of the Data Disk that is going to be attached. Standard or Premium"
             }
+        },
+         "dataDiskStorageAccountType": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "allowedValues": [
+                "Standard_LRS",
+                "Premium_LRS"
+            ],
+            "metadata": {
+                "description": "Stoarge Account Type"
+            }
+        },
+        "dataDiskstorageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Storage Account Name"
+            }
         }
     },
     "variables": {
@@ -72,7 +89,14 @@
                     },
                     "count": {
                         "value": "[variables('saCount')]"
+                    },
+                    "dataDiskStorageAccountType": {
+                      "value": "[parameters('dataDiskStorageAccountType')]"
+                    },
+                    "dataDiskstorageAccountName": {
+                      "value": "[parameters('dataDiskstorageAccountName')]"
                     }
+
                 }
             }
         }
