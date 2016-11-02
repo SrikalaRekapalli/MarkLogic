@@ -2,59 +2,74 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "commonSettings": {
-      "type": "object",
-      "metadata": {
-        "Description": "Common settings object"
-      }
-    },
-    "storageSettings": {
-      "type": "object",
-      "metadata": {
-        "Description": "Storage settings object"
-      }
-    },
-    "networkSettings": {
-      "type": "object",
-      "metadata": {
-        "Description": "Network settings object"
-      }
-    }
+     "location": {
+            "type": "string",
+            "defaultValue": "eastus",
+            "metadata": {
+                "description": "Deployment location"
+            }
+        },
+        "storageAccountType": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "metadata": {
+                "description": "Stoarge Account Type"
+            }
+        },
+        "storageApiVersion": {
+            "type": "string",
+            "defaultValue": "2015-06-15",
+            "metadata": {
+                "description": "API Version for the Storage Account"
+            }
+        },
+         "storageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Storage Account Name"
+            }
+        },
+        "count": {
+            "type": "int"
+        }
+    
   },
+ "variables": {
+        "storageAccountName": "[parameters('storageAccountName')]",
+        "storageApiVersion": "[parameters('storageApiVersion')]",
+        "storageAccountType": "[parameters('storageAccountType')]",
+        "storageAccName": "[concat(variables('storageAccountName'),uniqueString(resourceGroup().id))]",
+        "storageAccountUrl": "https://raw.githubusercontent.com/sysgain/MarkLogic/marklogicDev1/nested/multipleStorageAccounts.json"
+         },
+
   "resources": [
     {
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[concat(parameters('storageSettings').vhdStorageAccountName, copyindex())]",
-      "apiVersion": "2015-05-01-preview",
-      "location": "[resourceGroup().location]",
-      "copy": {
-        "name": "storageAccountsLoop",
-        "count": "[parameters('storageSettings').storageAccountCount]"
-      },
-      "properties": {
-        "accountType": "Standard_LRS"
-      }
-    },
-    {
-      "apiVersion": "2015-05-01-preview",
-      "type": "Microsoft.Network/virtualNetworks",
-      "name": "[concat(parameters('networkSettings').virtualNetworkName)]",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "addressSpace": {
-          "addressPrefixes": [
-            "[parameters('networkSettings').addressPrefix]"
-          ]
-        },
-        "subnets": [
-          {
-            "name": "[parameters('networkSettings').subnetName]",
+            "name": "storageAccountDeployment",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
             "properties": {
-              "addressPrefix": "[parameters('networkSettings').subnetPrefix]"
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('storageAccountUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "storageApiVersion": {
+                        "value": "[variables('storageApiVersion')]"
+                    },
+                    "storageAccountType": {
+                        "value": "[variables('storageAccountType')]"
+                    },
+                    "storageAccountName": {
+                        "value": "[variables('storageAccName')]"
+                    }
+               
+                }
             }
-          }
-        ]
-      }
-    }
+        }
+
   ]
 }
