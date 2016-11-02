@@ -74,6 +74,9 @@
                     "storageApiVersion": {
                         "value": "[variables('storageApiVersion')]"
                     },
+                   "count": {
+                        "value": "[parameters('count')]"
+                    },
                     "storageAccountType": {
                         "value": "[variables('storageAccountType')]"
                     },
@@ -102,6 +105,9 @@
                     },
                     "storageAccountType": {
                         "value": "[variables('dataDiskSAType')]"
+                    },
+                      "count": {
+                        "value": "[parameters('count')]"
                     },
                     "storageAccountName": {
                         "value": "[variables('dataDiskSAName')]"
