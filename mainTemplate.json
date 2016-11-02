@@ -8,25 +8,7 @@
         "description": "Location"
       }
     },
-    "clusterPrefix": {
-      "type": "string",
-      "defaultValue": "ucpclus",
-      "metadata": {
-        "description": "MarkLogic Cluster Prefix"
-      }
-    },
-    "clusterType": {
-      "type": "string",
-      "defaultValue": "MultiNode",
-      "allowedValues": [
-        "SingleNode",
-        "MultiNode"
-      ],
-      "metadata": {
-        "description": "MarkLogic Cluster Type. Multi or Single Node"
-      }
-    },
-    "clusterNodeCount": {
+    "nodeCount": {
       "type": "int",
       "defaultValue": 3,
       "minValue": 3,
@@ -35,44 +17,16 @@
         "description": "Number of Nodes in the Multi Node Cluster (Multi Node). Minimum 3 Nodes and Maximum 10 Nodes"
       }
     },
-    "singleNodeSize": {
+    "storageAccountName": {
       "type": "string",
-      "defaultValue": "Standard_DS11_v2",
-      "allowedValues": [
-        "Standard_DS11",
-        "Standard_DS12",
-        "Standard_DS13",
-        "Standard_DS14",
-        "Standard_DS11_v2",
-        "Standard_DS12_v2",
-        "Standard_DS13_v2",
-        "Standard_DS14_v2",
-        "Standard_DS15_v2",
-        "Standard_GS1",
-        "Standard_GS2",
-        "Standard_GS3",
-        "Standard_GS4",
-        "Standard_GS5"
-      ],
       "metadata": {
-        "description": "Size of the Marklogic Single Node VM"
+        "description": "Unique namespace for the Storage Account"
       }
     },
-    "clusterNodeSize": {
+    "dataDiskstorageAccountName": {
       "type": "string",
-      "defaultValue": "Standard_DS13_v2",
-      "allowedValues": [
-        "Standard_DS13",
-        "Standard_DS14",
-        "Standard_DS13_v2",
-        "Standard_DS14_v2",
-        "Standard_DS15_v2",
-        "Standard_GS3",
-        "Standard_GS4",
-        "Standard_GS5"
-      ],
       "metadata": {
-        "description": "Size of the MarkLogic Multi Node VMs"
+        "description": "Unique namespace for the Storage Account"
       }
     },
     "dataDiskStorageAccountType": {
@@ -86,28 +40,15 @@
         "description": "Type of the Data Disk that is going to be attached. Standard or Premium"
       }
     },
-    "MarkLogicLicenseKey": {
+    "storageAccountType":{
       "type": "string",
-      "metadata": {
-        "description": "License Key for MarkLogic"
-      }
-    },
-    "virtualNetworkNewOrExisting": {
-      "type": "string",
-      "defaultValue": "new",
+      "defaultValue": "Standard_LRS",
       "allowedValues": [
-        "new",
-        "existing"
+        "Standard_LRS",
+        "Premium_LRS"
       ],
       "metadata": {
-        "description": "Identifies whether to use new or existing Virtual Network"
-      }
-    },
-    "virtualNetworkExistingRGName": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Name of resource group of existing Virtual Network (if applicable)"
+        "description": "Type of the Data Disk that is going to be attached. Standard or Premium"
       }
     },
     "virtualNetworkName": {
@@ -130,123 +71,49 @@
         "description": "Subnet for the Search Head"
       }
     },
-    "subnet1Prefix": {
-      "type": "string",
-      "defaultValue": "10.0.1.0/24",
-      "metadata": {
-        "description": "Subnet for the Search Head"
-      }
-    },
-    "loadBalancerType": {
-      "type": "string",
-      "defaultValue": "external",
-      "allowedValues": [
-        "external",
-        "internal"
-      ],
-      "metadata": {
-        "description": "Subnet for the Search Head"
-      }
-    },
-    "adminUsername": {
-      "type": "string",
-      "defaultValue": "ucpadmin",
-      "metadata": {
-        "description": "OS Admin User Name for MarkLogic Nodes"
-      }
-    },
-    "authenticationType": {
-      "type": "string",
-      "defaultValue": "password",
-      "metadata": {
-        "description": "Authentication type"
-      }
-    },
-    "adminPassword": {
-      "type": "securestring",
-      "defaultValue": "",
-      "metadata": {
-        "description": "OS Admin password"
-      }
-    },
-    "sshPublicKey": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "SSH public key"
-      }
-    },
-    "adminUsernameMarkLogicPortal": {
-      "type": "string",
-      "defaultValue": "ucpadmin",
-      "metadata": {
-        "description": "Admin User Name for MarkLogic Admin Portal"
-      }
-    },
-    "adminPasswordMarkLogicPortal": {
-      "type": "securestring",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Admin password for MarkLogic Admin Portal"
-      }
-    },
-    "loadBalancerType": {
-      "type": "string",
-      "defaultValue": "external",
-      "allowedValues": [
-        "external",
-        "internal"
-      ],
-      "metadata": {
-        "description": "Type of Load Balancer to be used. External or Internal"
-      }
-    },
     "baseUrl": {
       "type": "string",
       "metadata": {
         "description": "Base URL for Marketplace",
         "artifactsBaseUrl": ""
       },
-      "defaultValue": "https://raw.githubusercontent.com/sysgain/MarkLogic/master"
+      "defaultValue": "https://raw.githubusercontent.com/haroldwongms/hwucptest/master"
     }
   },
   "variables": {
-    "apiVersions": {
-      "deploymentAPIVersion": "2015-01-01",
-      "networkAPIVersion": "2015-06-15"
+    "storageSettings": {
+      "vhdStorageAccountName": "[parameters('storageAccountName')]",
+      "vhdContainerName": "[variables('vmStorageAccountContainerName')]",
+      "destinationVhdsContainer": "[concat('https://', parameters('storageAccountName'), variables('vmStorageAccountDomain'), '/', variables('vmStorageAccountContainerName'), '/')]",
+      "storageAccountCount": "[variables('clusterSpec').storageAccountCount]",
+      "storageNameForFrontEnd": "[parameters('storageNameForFrontEnd')]"
     },
     "networkSettings": {
       "virtualNetworkName": "[parameters('virtualNetworkName')]",
-      "virtualNetworkExistingRGName": "[parameters('virtualNetworkExistingRGName')]",
-      "virtualNetworkAddressPrefix": "[parameters('virtualNetworkAddressPrefix')]",
-      "subnets": {
-        "subnet1": {
-          "name": "[parameters('subnet1Name')]",
-          "prefix": "[parameters('subnet1Prefix')]"
-        }
-      }
+      "addressPrefix": "[parameters('addressPrefix')]",
+      "subnetName": "[parameters('subnetName')]",
+      "subnetPrefix": "[parameters('subnetPrefix')]",
+      "subnetRef": "[concat(variables('vnetID'), '/subnets/', parameters('subnetName'))]",
+      "machineIpPrefix": "[parameters('nodeAddressPrefix')]",
+      "vnetID": "[variables('vnetID')]"
     },
-    "virtualNetworkTemplateUrl": "[concat(parameters('baseUrl'), '/nested/', 'vnet-', parameters('virtualNetworkNewOrExisting'), '.json')]",
-    "loadBalancerTemplateUrl": "[concat(parameters('baseUrl'), '/nested/', 'lb-', parameters('loadBalancerType'), '.json')]"
+    "sharedTemplateUrl": "[concat(parameters('baseUrl'), 'shared-resources.json')]",
+    "virtualNetworkTemplateUrl": "[concat(parameters('baseUrl'), '/nested/', 'vnet-', parameters('virtualNetworkNewOrExisting'), '.json')]"
   },
   "resources": [
     {
-      "name": "virtual-network",
+      "name": "shared-resources",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "[variables('apiVersions').deploymentAPIVersion]",
-      "comments": "Virtual network deployment",
+      "apiVersion": "2015-01-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('virtualNetworkTemplateUrl')]",
+          "uri": "[variables('sharedTemplateUrl')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "location": {
-            "value": "[parameters('location')]"
-          },
-          "apiVersions": {
-            "value": "[variables('apiVersions')]"
+            "storageSettings": {
+            "value": "[variables('storageSettings')]"
           },
           "networkSettings": {
             "value": "[variables('networkSettings')]"
@@ -254,6 +121,7 @@
         }
       }
     }
-  ],
-  "outputs": {}
+
+  ]
+  
 }
