@@ -30,6 +30,10 @@
                 "description": "API Version for the Storage Account"
             }
         },
+         "count": {
+            "type": "int",
+            "defaultValue": 3
+               },
         "storageAccountName": {
             "type": "string",
             "metadata": {
